@@ -14,7 +14,7 @@ import pandas as pd
 import datetime
 import os 
 
-
+#Get the data path
 cwd=os.getcwd()
 data_path=cwd +"\\Business Analytics\\Business Analytics\\Business Analytics\\"
 
@@ -35,6 +35,7 @@ for index, row in training_data.iterrows():
    training_data.at[index, "Month"] = datetime.datetime.strptime(row["Game_Date"], "%m/%d/%Y").month
    training_data.at[index, "Week Day"] = datetime.datetime.strptime(row["Game_Date"], "%m/%d/%Y").weekday()
 
+
 training_data = training_data.join(pd.get_dummies(training_data["Month"]), rsuffix="_month")
 training_data = training_data.join(pd.get_dummies(training_data["Week Day"]), rsuffix="_week")
 
@@ -42,18 +43,25 @@ training_data = training_data.join(pd.get_dummies(training_data["Week Day"]), rs
 game_data = pd.read_csv(data_path+"game_data.csv")
 player_data = pd.read_csv(data_path + "player_data.csv")
 split_idx = int(len(training_data)*.8)
+
+print("The split index is ")
+print(split_idx)
+#assert(1<0)
 train = training_data[:split_idx]
 test = training_data[split_idx:]
 
+#Drop the appropiate columns
+dropped_columns=["Game_ID", "Game_Date", "Away_Team", "Home_Team", "Rounded Viewers"]
+
 train_y = train["Rounded Viewers"]
-train_x = train.drop(columns=["Rounded Viewers"])
-
+train_x = train.drop(columns=dropped_columns)
 test_y = test["Rounded Viewers"]
-test_x = test.drop(columns=["Rounded Viewers"])
-
+test_x = test.drop(columns=dropped_columns)
 regr = linear_model.LinearRegression()
 
 
+print("The values of train_x are")
+print(train_x)
 
 # Train the model using the training sets
 regr.fit(train_x, train_y)
@@ -70,10 +78,12 @@ print("Mean squared error: %.2f"
 print('Variance score: %.2f' % r2_score(test_y, pred_y))
 
 # Plot outputs
-plt.scatter(test_x, test_y,  color='black')
-plt.plot(test_x, pred_y, color='blue', linewidth=3)
+plt.scatter(range(test_y.shape[0]), test_y,  color='black')
+plt.scatter(range(test_y.shape[0]), pred_y,  color='red')
+#plt.plot(test_x, pred_y, color='blue', linewidth=3)
 
 plt.xticks(())
 plt.yticks(())
 
 plt.show()
+plt.savefig("Baseline.png")
