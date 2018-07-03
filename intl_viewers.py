@@ -87,3 +87,12 @@ plt.yticks(())
 
 plt.show()
 plt.savefig("Baseline.png")
+
+#Call to get score
+
+
+
+
+#Is it worthwhile getting the p-values of the regression coefficents.
+# 
+# #pip install nba_py 
